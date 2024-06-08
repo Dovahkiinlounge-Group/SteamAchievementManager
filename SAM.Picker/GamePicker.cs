@@ -43,6 +43,9 @@ namespace SAM.Picker
         private readonly Dictionary<uint, GameInfo> _Games;
         private readonly List<GameInfo> _FilteredGames;
         private int _SelectedGameIndex;
+        private int _cacheHits = 0;
+        private int _downloads = 0;
+        private object _lockObject = new object();
 
         private readonly List<string> _LogosAttempted;
         private readonly ConcurrentQueue<GameInfo> _LogoQueue;
@@ -60,7 +63,7 @@ namespace SAM.Picker
             this._LogoQueue = new ConcurrentQueue<GameInfo>();
 
             this.InitializeComponent();
-
+            this.Text = API.Native.App.title;
             var blank = new Bitmap(this._LogoImageList.ImageSize.Width, this._LogoImageList.ImageSize.Height);
             using (var g = Graphics.FromImage(blank))
             {
@@ -234,25 +237,74 @@ namespace SAM.Picker
         private void DoDownloadLogo(object sender, DoWorkEventArgs e)
         {
             var info = (GameInfo)e.Argument;
-            var logoPath = string.Format(
-                CultureInfo.InvariantCulture,
-                "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/{0}/{1}.jpg",
-                info.Id,
-                info.Logo);
-            using (var downloader = new WebClient())
+            var cacheFolder = SAM.API.Native.App.CacheFolderPath;
+
+            // Ensure the cache folder exists
+            if (!Directory.Exists(cacheFolder))
             {
+                Directory.CreateDirectory(cacheFolder);
+            }
+
+            var cacheFilePath = Path.Combine(cacheFolder, $"{info.Id}_{info.Logo}.jpg");
+
+            if (File.Exists(cacheFilePath))
+            {
+                // Load from cache
                 try
                 {
-                    var data = downloader.DownloadData(new Uri(logoPath));
-                    using (var stream = new MemoryStream(data, false))
+                    using (var stream = new FileStream(cacheFilePath, FileMode.Open, FileAccess.Read))
                     {
                         var bitmap = new Bitmap(stream);
                         e.Result = new LogoInfo(info.Id, bitmap);
+
+                        lock (_lockObject)
+                        {
+                            _cacheHits++;
+                        }
+                        UpdateStatusLabel();
                     }
                 }
                 catch (Exception)
                 {
                     e.Result = new LogoInfo(info.Id, null);
+                }
+            }
+            else
+            {
+                // Download and cache the logo
+                var logoPath = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/{0}/{1}.jpg",
+                    info.Id,
+                    info.Logo);
+
+                using (var downloader = new WebClient())
+                {
+                    try
+                    {
+                        var data = downloader.DownloadData(new Uri(logoPath));
+                        using (var stream = new MemoryStream(data, false))
+                        {
+                            var bitmap = new Bitmap(stream);
+                            e.Result = new LogoInfo(info.Id, bitmap);
+
+                            // Save to cache
+                            using (var fileStream = new FileStream(cacheFilePath, FileMode.Create, FileAccess.Write))
+                            {
+                                stream.WriteTo(fileStream);
+                            }
+
+                            lock (_lockObject)
+                            {
+                                _downloads++;
+                            }
+                            UpdateStatusLabel();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        e.Result = new LogoInfo(info.Id, null);
+                    }
                 }
             }
         }
@@ -293,11 +345,26 @@ namespace SAM.Picker
 
             this._DownloadStatusLabel.Text = string.Format(
                 CultureInfo.CurrentCulture,
-                "Downloading {0} game icons...",
-                this._LogoQueue.Count);
+                "Downloading {0} game icons... (Cache hits: {1}, Downloads: {2})",
+                this._LogoQueue.Count + _cacheHits + _downloads,
+                _cacheHits,
+                _downloads);
             this._DownloadStatusLabel.Visible = true;
 
             this._LogoWorker.RunWorkerAsync(info);
+        }
+
+        private void UpdateStatusLabel()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                this._DownloadStatusLabel.Text = string.Format(
+                    CultureInfo.CurrentCulture,
+                    "Downloading {0} game icons... (Cache hits: {1}, Downloads: {2})",
+                    this._LogoQueue.Count + _cacheHits + _downloads,
+                    _cacheHits,
+                    _downloads);
+            });
         }
 
         private void AddGameToLogoQueue(GameInfo info)
@@ -355,7 +422,7 @@ namespace SAM.Picker
 
         private void AddDefaultGames()
         {
-            this.AddGame(480, "normal"); // Spacewar
+            //this.AddGame(480, "normal"); // Spacewar
         }
 
         private void OnTimer(object sender, EventArgs e)
