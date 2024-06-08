@@ -6,10 +6,6 @@ This is the code for SAM, originally released in 2008 by [Gibbed](https://github
 
 [Download latest Release By Me](https://github.com/CelinexCute/SteamAchievementManager/releases/latest).
 
-
-### Updates Since 2024
-- **2024:** Introduced a plugin system for extended functionality.
-
 ### Feature List
 
 - 🏆 **Achievement Management**
