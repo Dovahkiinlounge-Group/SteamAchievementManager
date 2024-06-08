@@ -135,10 +135,34 @@ namespace SAM.Picker
             this.DownloadNextLogo();
         }
 
+
         private void RefreshGames()
         {
             this._SelectedGameIndex = -1;
             this._FilteredGames.Clear();
+            int iconsLoaded = 0;
+            long totalSizeInBytes = 0;
+
+            // Get the path to the cache folder
+            string cacheFolderPath = API.Native.App.CacheFolderPath; // Replace with the actual path to your cache folder
+
+            // Check if the cache folder exists
+            if (Directory.Exists(cacheFolderPath))
+            {
+                // Get the files in the cache folder
+                string[] files = Directory.GetFiles(cacheFolderPath);
+
+                // Iterate through each file to get its size
+                foreach (string file in files)
+                {
+                    FileInfo fileInfo = new FileInfo(file);
+                    totalSizeInBytes += fileInfo.Length;
+                }
+            }
+
+            // Convert the total size from bytes to megabytes
+            double totalSizeInMB = totalSizeInBytes / (1024f * 1024f);
+
             foreach (var info in this._Games.Values.OrderBy(gi => gi.Name))
             {
                 if (info.Type == "normal" && _FilterGamesMenuItem.Checked == false)
@@ -159,14 +183,22 @@ namespace SAM.Picker
                 }
                 this._FilteredGames.Add(info);
                 this.AddGameToLogoQueue(info);
+
+                // Assuming AddGameToLogoQueue method loads the icon and updates info.IconLoaded and info.IconSize
+                if (info.IconLoaded)
+                {
+                    iconsLoaded++;
+                }
             }
 
             this._GameListView.VirtualListSize = this._FilteredGames.Count;
             this._PickerStatusLabel.Text = string.Format(
                 CultureInfo.CurrentCulture,
-                "Displaying {0} games. Total {1} games.",
+                "Displaying {0} games. Total {1} games. {3} MB of Cache.",
                 this._GameListView.Items.Count,
-                this._Games.Count);
+                this._Games.Count,
+                iconsLoaded,
+                totalSizeInMB.ToString("F2")); // Format total size to 2 decimal places
 
             if (this._GameListView.Items.Count > 0)
             {
@@ -174,6 +206,9 @@ namespace SAM.Picker
                 this._GameListView.Select();
             }
         }
+
+
+
 
         private void OnGameListViewRetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {

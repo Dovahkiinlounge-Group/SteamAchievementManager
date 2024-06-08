@@ -39,7 +39,8 @@ namespace SAM.Picker
         }
 
         public string Logo;
-
+        public bool IconLoaded { get; set; }
+        public long IconSize { get; set; }
         public GameInfo(uint id, string type)
         {
             this.Id = id;
