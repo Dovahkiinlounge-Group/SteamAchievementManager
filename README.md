@@ -2,9 +2,9 @@
 
 This is the code for SAM, originally released in 2008 by [Gibbed](https://github.com/gibbed), last major release in 2011, and last updated in 2013 (a hotfix). Since then, I have taken over the updates and continued enhancing the software.
 
-[Download last release from Gibbed](https://github.com/gibbed/SteamAchievementManager/releases/latest).
+[Download last release from](https://github.com/gibbed/SteamAchievementManager/releases/latest) - [Gibbed](https://github.com/gibbed) .
 
-[Download last release from Gibbed](https://github.com/CelinexCute/SteamAchievementManager/releases/latest).
+[Download latest Release By Me](https://github.com/CelinexCute/SteamAchievementManager/releases/latest).
 
 
 ### Updates Since 2024
@@ -18,7 +18,9 @@ This is the code for SAM, originally released in 2008 by [Gibbed](https://github
   - ✅ Batch unlock achievements
 
 - 🌍 **Multi-language Support**
-  - ✅ Coming Soon
+  * [✅] English
+  - [ ] Update the website
+  - [ ] Contact the media
 
 Feel free to reach out if you have any questions or need further assistance. Enjoy using Steam Achievement Manager!
 
