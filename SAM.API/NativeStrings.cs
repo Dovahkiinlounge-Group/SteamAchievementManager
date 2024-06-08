@@ -21,6 +21,7 @@
  */
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
@@ -136,6 +137,26 @@ namespace SAM.API
         public static unsafe string PointerToString(IntPtr nativeData, int length)
         {
             return PointerToString((sbyte*)nativeData.ToPointer(), length);
+        }
+    }
+
+    public class Native
+    {
+        public static class App
+        {
+            public static string MainName { get; } = "DovahkiinLounge Group";
+            public static string FolderName { get; } = "SAM";
+
+            public static string title { get; } = "Steam Achievement Manager 7.1 | Pick a game...";
+
+
+            public static string CacheFolderPath
+            {
+                get
+                {
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), MainName, FolderName, "LogoCache");
+                }
+            }
         }
     }
 }
