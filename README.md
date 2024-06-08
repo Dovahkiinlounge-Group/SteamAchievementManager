@@ -18,9 +18,8 @@ This is the code for SAM, originally released in 2008 by [Gibbed](https://github
   - ✅ Batch unlock achievements
 
 - 🌍 **Multi-language Support**
-  * [✅] English
-  - [ ] Update the website
-  - [ ] Contact the media
+  - [✅] English
+  - [❌] German
 
 Feel free to reach out if you have any questions or need further assistance. Enjoy using Steam Achievement Manager!
 
