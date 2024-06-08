@@ -98,6 +98,7 @@
             // 
             _AddGameTextBox.Name = "_AddGameTextBox";
             _AddGameTextBox.Size = new System.Drawing.Size(116, 25);
+            _AddGameTextBox.Visible = false;
             // 
             // _AddGameButton
             // 
@@ -106,6 +107,7 @@
             _AddGameButton.Name = "_AddGameButton";
             _AddGameButton.Size = new System.Drawing.Size(83, 22);
             _AddGameButton.Text = "Add Game";
+            _AddGameButton.Visible = false;
             _AddGameButton.Click += OnAddGame;
             // 
             // _FilterDropDownButton
@@ -124,7 +126,7 @@
             _FilterGamesMenuItem.CheckOnClick = true;
             _FilterGamesMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             _FilterGamesMenuItem.Name = "_FilterGamesMenuItem";
-            _FilterGamesMenuItem.Size = new System.Drawing.Size(142, 22);
+            _FilterGamesMenuItem.Size = new System.Drawing.Size(180, 22);
             _FilterGamesMenuItem.Text = "Show &games";
             _FilterGamesMenuItem.CheckedChanged += OnFilterUpdate;
             // 
@@ -132,7 +134,7 @@
             // 
             _FilterDemosMenuItem.CheckOnClick = true;
             _FilterDemosMenuItem.Name = "_FilterDemosMenuItem";
-            _FilterDemosMenuItem.Size = new System.Drawing.Size(142, 22);
+            _FilterDemosMenuItem.Size = new System.Drawing.Size(180, 22);
             _FilterDemosMenuItem.Text = "Show &demos";
             _FilterDemosMenuItem.CheckedChanged += OnFilterUpdate;
             // 
@@ -140,7 +142,7 @@
             // 
             _FilterModsMenuItem.CheckOnClick = true;
             _FilterModsMenuItem.Name = "_FilterModsMenuItem";
-            _FilterModsMenuItem.Size = new System.Drawing.Size(142, 22);
+            _FilterModsMenuItem.Size = new System.Drawing.Size(180, 22);
             _FilterModsMenuItem.Text = "Show &mods";
             _FilterModsMenuItem.CheckedChanged += OnFilterUpdate;
             // 
@@ -148,7 +150,7 @@
             // 
             _FilterJunkMenuItem.CheckOnClick = true;
             _FilterJunkMenuItem.Name = "_FilterJunkMenuItem";
-            _FilterJunkMenuItem.Size = new System.Drawing.Size(142, 22);
+            _FilterJunkMenuItem.Size = new System.Drawing.Size(180, 22);
             _FilterJunkMenuItem.Text = "Show &junk";
             _FilterJunkMenuItem.CheckedChanged += OnFilterUpdate;
             // 
