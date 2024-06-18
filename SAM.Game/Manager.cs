@@ -28,6 +28,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using APITypes = SAM.API.Types;
 
@@ -35,6 +38,10 @@ namespace SAM.Game
 {
     internal partial class Manager : Form
     {
+        private readonly Dictionary<string, Image> _iconCache = new Dictionary<string, Image>();
+        private readonly Dictionary<string, Stats.AchievementInfo> _achievementCache = new Dictionary<string, Stats.AchievementInfo>();
+        private readonly Dictionary<string, Stats.StatInfo> _statCache = new Dictionary<string, Stats.StatInfo>();
+
         private readonly long _GameId;
         private readonly API.Client _SteamClient;
 
@@ -107,8 +114,18 @@ namespace SAM.Game
             this.RefreshStats();
         }
 
-        private void AddAchievementIcon(Stats.AchievementInfo info, Image icon)
+        private void AddAchievementIcon(Stats.AchievementInfo info, byte[] iconData)
         {
+            Image icon = null;
+
+            if (iconData != null && iconData.Length > 0)
+            {
+                using (MemoryStream ms = new MemoryStream(iconData))
+                {
+                    icon = Image.FromStream(ms);
+                }
+            }
+
             if (icon == null)
             {
                 info.ImageIndex = 0;
@@ -119,36 +136,108 @@ namespace SAM.Game
                 this._AchievementImageList.Images.Add(info.IsAchieved == true ? info.IconNormal : info.IconLocked, icon);
             }
         }
-
-        private void OnIconDownload(object sender, DownloadDataCompletedEventArgs e)
+        public async Task<string> GetGameNameAsync(string gameId)
         {
-            if (e.Error == null && e.Cancelled == false)
+            string url = $"https://store.steampowered.com/api/appdetails/?appids={gameId}";
+
+            using (HttpClient client = new HttpClient())
             {
-                var info = e.UserState as Stats.AchievementInfo;
-
-                Bitmap bitmap;
-
                 try
                 {
-                    using (var stream = new MemoryStream())
+                    HttpResponseMessage response = await client.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        stream.Write(e.Result, 0, e.Result.Length);
-                        bitmap = new Bitmap(stream);
+                        string json = await response.Content.ReadAsStringAsync();
+                        var gameData = JsonSerializer.Deserialize<Dictionary<string, SteamGameDetails>>(json);
+
+                        // Check if the game exists and retrieve its name
+                        if (gameData.TryGetValue(gameId, out var gameDetails) && gameDetails.Success)
+                        {
+
+                            return gameDetails.Data.Name;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Game details not found for game ID {gameId}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error fetching game details: {response.StatusCode}");
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    bitmap = null;
+                    Console.WriteLine($"Error: {ex.Message}");
                 }
-
-                this.AddAchievementIcon(info, bitmap);
-                this._AchievementListView.Update();
             }
 
-            this.DownloadNextIcon();
+            return null; // Return null if game name cannot be fetched
         }
 
-        private void DownloadNextIcon()
+
+
+
+
+        public class SteamGameDetails
+        {
+            public SteamGameDetail Data { get; set; }
+            public bool Success { get; set; }
+        }
+
+        public class SteamGameDetail
+        {
+            public string Name { get; set; }
+        }
+        private async void OnIconDownload(object sender, DownloadDataCompletedEventArgs e)
+        {
+            if (e.Error == null && !e.Cancelled)
+            {
+                var info = e.UserState as Stats.AchievementInfo;
+                byte[] iconData = e.Result;
+
+                // Get game name from Steam API
+                string gameId = this._GameId.ToString(); // Assuming _GameId is the Steam game ID
+                string gameName = await GetGameNameAsync(gameId);
+
+                if (!string.IsNullOrEmpty(gameName))
+                {
+                    string cacheDirectory = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        "DovahkiinLounge Group", "SAM", "AchievementIcons", $"{gameId}");
+
+                    Directory.CreateDirectory(cacheDirectory); // Ensure cache directory exists
+
+                    string cachePath = Path.Combine(cacheDirectory, $"{info.Id}.png");
+
+                    try
+                    {
+                        File.WriteAllBytes(cachePath, iconData);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error saving icon to cache: {ex.Message}");
+                    }
+
+                    // Update UI with downloaded icon
+                    this.AddAchievementIcon(info, iconData);
+                    this._AchievementListView.Update();
+                }
+                else
+                {
+                    Console.WriteLine($"Error: Could not retrieve game name for gameId {gameId}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Error downloading icon: {e.Error?.Message}");
+            }
+
+            DownloadNextIcon(); // Continue to next icon in queue
+        }
+
+        private async void DownloadNextIcon()
         {
             if (this._IconQueue.Count == 0)
             {
@@ -156,7 +245,7 @@ namespace SAM.Game
                 return;
             }
 
-            if (this._IconDownloader.IsBusy == true)
+            if (this._IconDownloader.IsBusy)
             {
                 return;
             }
@@ -170,24 +259,78 @@ namespace SAM.Game
             var info = this._IconQueue[0];
             this._IconQueue.RemoveAt(0);
 
+            // Check local cache first
+            string cacheDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "DovahkiinLounge Group", "SAM", "AchievementIcons", Name + " - " + _GameId);
 
-            this._IconDownloader.DownloadDataAsync(
-                new Uri(string.Format(
-                    CultureInfo.InvariantCulture,
-                    "http://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/{0}/{1}",
-                    this._GameId,
-                    info.IsAchieved == true ? info.IconNormal : info.IconLocked)),
-                info);
+            Directory.CreateDirectory(cacheDirectory); // Ensure cache directory exists
+
+            string cachePath = Path.Combine(cacheDirectory, $"{info.Id}.png");
+
+            if (File.Exists(cachePath))
+            {
+                byte[] iconData = File.ReadAllBytes(cachePath);
+                this.AddAchievementIcon(info, iconData); // Update UI with cached icon
+                this._AchievementListView.Update();
+                this.DownloadNextIcon(); // Continue to next icon
+                return;
+            }
+
+            // If not found in cache, download from Steam CDN
+            string url = string.Format(
+                CultureInfo.InvariantCulture,
+                "http://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/{0}/{1}",
+                this._GameId,
+                info.IsAchieved ? info.IconNormal : info.IconLocked);
+
+            try
+            {
+                byte[] iconData = await DownloadIconDataAsync(url);
+                if (iconData != null)
+                {
+                    File.WriteAllBytes(cachePath, iconData); // Save to local cache
+                    this.AddAchievementIcon(info, iconData); // Update UI with downloaded icon
+                    this._AchievementListView.Update();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error downloading or saving icon: {ex.Message}");
+            }
+
+            this.DownloadNextIcon(); // Continue to next icon
         }
+
+        private async Task<byte[]> DownloadIconDataAsync(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsByteArrayAsync();
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to download icon. Status: {response.StatusCode}");
+                    return null;
+                }
+            }
+        }
+
+
+
 
         private static string TranslateError(int id)
         {
             switch (id)
             {
                 case 2:
-                {
-                    return "generic error -- this usually means you don't own the game";
-                }
+                    {
+                        return "generic error -- this usually means you don't own the game";
+                    }
             }
 
             return id.ToString(CultureInfo.InvariantCulture);
@@ -277,90 +420,90 @@ namespace SAM.Game
                 switch (type)
                 {
                     case APITypes.UserStatType.Invalid:
-                    {
-                        break;
-                    }
+                        {
+                            break;
+                        }
 
                     case APITypes.UserStatType.Integer:
-                    {
-                        var id = stat["name"].AsString("");
-                        string name = GetLocalizedString(stat["display"]["name"], currentLanguage, id);
-
-                        this._StatDefinitions.Add(new Stats.IntegerStatDefinition()
                         {
-                            Id = stat["name"].AsString(""),
-                            DisplayName = name,
-                            MinValue = stat["min"].AsInteger(int.MinValue),
-                            MaxValue = stat["max"].AsInteger(int.MaxValue),
-                            MaxChange = stat["maxchange"].AsInteger(0),
-                            IncrementOnly = stat["incrementonly"].AsBoolean(false),
-                            DefaultValue = stat["default"].AsInteger(0),
-                            Permission = stat["permission"].AsInteger(0),
-                        });
-                        break;
-                    }
+                            var id = stat["name"].AsString("");
+                            string name = GetLocalizedString(stat["display"]["name"], currentLanguage, id);
+
+                            this._StatDefinitions.Add(new Stats.IntegerStatDefinition()
+                            {
+                                Id = stat["name"].AsString(""),
+                                DisplayName = name,
+                                MinValue = stat["min"].AsInteger(int.MinValue),
+                                MaxValue = stat["max"].AsInteger(int.MaxValue),
+                                MaxChange = stat["maxchange"].AsInteger(0),
+                                IncrementOnly = stat["incrementonly"].AsBoolean(false),
+                                DefaultValue = stat["default"].AsInteger(0),
+                                Permission = stat["permission"].AsInteger(0),
+                            });
+                            break;
+                        }
 
                     case APITypes.UserStatType.Float:
                     case APITypes.UserStatType.AverageRate:
-                    {
-                        var id = stat["name"].AsString("");
-                        string name = GetLocalizedString(stat["display"]["name"], currentLanguage, id);
-
-                        this._StatDefinitions.Add(new Stats.FloatStatDefinition()
                         {
-                            Id = stat["name"].AsString(""),
-                            DisplayName = name,
-                            MinValue = stat["min"].AsFloat(float.MinValue),
-                            MaxValue = stat["max"].AsFloat(float.MaxValue),
-                            MaxChange = stat["maxchange"].AsFloat(0.0f),
-                            IncrementOnly = stat["incrementonly"].AsBoolean(false),
-                            DefaultValue = stat["default"].AsFloat(0.0f),
-                            Permission = stat["permission"].AsInteger(0),
-                        });
-                        break;
-                    }
+                            var id = stat["name"].AsString("");
+                            string name = GetLocalizedString(stat["display"]["name"], currentLanguage, id);
+
+                            this._StatDefinitions.Add(new Stats.FloatStatDefinition()
+                            {
+                                Id = stat["name"].AsString(""),
+                                DisplayName = name,
+                                MinValue = stat["min"].AsFloat(float.MinValue),
+                                MaxValue = stat["max"].AsFloat(float.MaxValue),
+                                MaxChange = stat["maxchange"].AsFloat(0.0f),
+                                IncrementOnly = stat["incrementonly"].AsBoolean(false),
+                                DefaultValue = stat["default"].AsFloat(0.0f),
+                                Permission = stat["permission"].AsInteger(0),
+                            });
+                            break;
+                        }
 
                     case APITypes.UserStatType.Achievements:
                     case APITypes.UserStatType.GroupAchievements:
-                    {
-                        if (stat.Children != null)
                         {
-                            foreach (var bits in stat.Children.Where(
-                                b => string.Compare(b.Name, "bits", StringComparison.InvariantCultureIgnoreCase) == 0))
+                            if (stat.Children != null)
                             {
-                                if (bits.Valid == false ||
-                                    bits.Children == null)
+                                foreach (var bits in stat.Children.Where(
+                                    b => string.Compare(b.Name, "bits", StringComparison.InvariantCultureIgnoreCase) == 0))
                                 {
-                                    continue;
-                                }
-
-                                foreach (var bit in bits.Children)
-                                {
-                                    string id = bit["name"].AsString("");
-                                    string name = GetLocalizedString(bit["display"]["name"], currentLanguage, id);
-                                    string desc = GetLocalizedString(bit["display"]["desc"], currentLanguage, "");
-
-                                    this._AchievementDefinitions.Add(new Stats.AchievementDefinition()
+                                    if (bits.Valid == false ||
+                                        bits.Children == null)
                                     {
-                                        Id = id,
-                                        Name = name,
-                                        Description = desc,
-                                        IconNormal = bit["display"]["icon"].AsString(""),
-                                        IconLocked = bit["display"]["icon_gray"].AsString(""),
-                                        IsHidden = bit["display"]["hidden"].AsBoolean(false),
-                                        Permission = bit["permission"].AsInteger(0),
-                                    });
+                                        continue;
+                                    }
+
+                                    foreach (var bit in bits.Children)
+                                    {
+                                        string id = bit["name"].AsString("");
+                                        string name = GetLocalizedString(bit["display"]["name"], currentLanguage, id);
+                                        string desc = GetLocalizedString(bit["display"]["desc"], currentLanguage, "");
+
+                                        this._AchievementDefinitions.Add(new Stats.AchievementDefinition()
+                                        {
+                                            Id = id,
+                                            Name = name,
+                                            Description = desc,
+                                            IconNormal = bit["display"]["icon"].AsString(""),
+                                            IconLocked = bit["display"]["icon_gray"].AsString(""),
+                                            IsHidden = bit["display"]["hidden"].AsBoolean(false),
+                                            Permission = bit["permission"].AsInteger(0),
+                                        });
+                                    }
                                 }
                             }
+
+                            break;
                         }
 
-                        break;
-                    }
-
                     default:
-                    {
-                        throw new InvalidOperationException("invalid stat type");
-                    }
+                        {
+                            throw new InvalidOperationException("invalid stat type");
+                        }
                 }
             }
 
@@ -732,6 +875,7 @@ namespace SAM.Game
 
         private void OnStore(object sender, EventArgs e)
         {
+            string gameId = this._GameId.ToString();
             int achievements = this.StoreAchievements();
             if (achievements < 0)
             {
@@ -752,6 +896,22 @@ namespace SAM.Game
                 return;
             }
 
+            // Delete AchievementIcons directory for the current game ID
+            string cacheDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "DovahkiinLounge Group", "SAM", "AchievementIcons", gameId);
+
+            try
+            {
+                Directory.Delete(cacheDirectory, true); // true to delete recursively if exists
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting cache directory: {ex.Message}");
+                // Handle any exception or logging here
+            }
+
+            // Show information message
             MessageBox.Show(
                 this,
                 string.Format(
@@ -764,6 +924,7 @@ namespace SAM.Game
                 MessageBoxIcon.Information);
             this.RefreshStats();
         }
+
 
         private void OnStatDataError(object sender, DataGridViewDataErrorEventArgs e)
         {
