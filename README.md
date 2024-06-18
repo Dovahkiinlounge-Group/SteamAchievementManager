@@ -13,6 +13,9 @@ This is the code for SAM, originally released in 2008 by [Gibbed](https://github
   - ✅ Lock individual achievements
   - ✅ Batch unlock achievements
 
+- **Other Features**
+  - Cached download icons: Icons used within the application are cached locally after initial download, reducing load times and improving responsiveness.
+
 Feel free to reach out if you have any questions or need further assistance. Enjoy using Steam Achievement Manager!
 
 
