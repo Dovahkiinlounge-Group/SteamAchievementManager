@@ -81,7 +81,7 @@
             _PickerToolStrip.Items.AddRange(new ToolStripItem[] { _RefreshGamesButton, _ToolStripSeparator1, _AddGameTextBox, _AddGameButton, _ToolStripSeparator2, _FilterDropDownButton });
             _PickerToolStrip.Location = new Point(0, 0);
             _PickerToolStrip.Name = "_PickerToolStrip";
-            _PickerToolStrip.Size = new Size(1156, 25);
+            _PickerToolStrip.Size = new Size(1198, 25);
             _PickerToolStrip.TabIndex = 1;
             _PickerToolStrip.Text = "toolStrip1";
             // 
@@ -98,7 +98,6 @@
             // 
             _AddGameTextBox.Name = "_AddGameTextBox";
             _AddGameTextBox.Size = new Size(116, 25);
-            _AddGameTextBox.Visible = false;
             // 
             // _AddGameButton
             // 
@@ -107,7 +106,6 @@
             _AddGameButton.Name = "_AddGameButton";
             _AddGameButton.Size = new Size(83, 22);
             _AddGameButton.Text = "Add Game";
-            _AddGameButton.Visible = false;
             _AddGameButton.Click += OnAddGame;
             // 
             // _FilterDropDownButton
@@ -164,7 +162,7 @@
             _GameListView.Margin = new Padding(4, 3, 4, 3);
             _GameListView.MultiSelect = false;
             _GameListView.Name = "_GameListView";
-            _GameListView.Size = new Size(1156, 610);
+            _GameListView.Size = new Size(1198, 610);
             _GameListView.SmallImageList = _LogoImageList;
             _GameListView.Sorting = SortOrder.Ascending;
             _GameListView.TabIndex = 0;
@@ -182,14 +180,14 @@
             _PickerStatusStrip.Location = new Point(0, 635);
             _PickerStatusStrip.Name = "_PickerStatusStrip";
             _PickerStatusStrip.Padding = new Padding(1, 0, 16, 0);
-            _PickerStatusStrip.Size = new Size(1156, 22);
+            _PickerStatusStrip.Size = new Size(1198, 22);
             _PickerStatusStrip.TabIndex = 2;
             _PickerStatusStrip.Text = "statusStrip";
             // 
             // _PickerStatusLabel
             // 
             _PickerStatusLabel.Name = "_PickerStatusLabel";
-            _PickerStatusLabel.Size = new Size(1139, 17);
+            _PickerStatusLabel.Size = new Size(1181, 17);
             _PickerStatusLabel.Spring = true;
             _PickerStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -217,10 +215,11 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1156, 657);
+            ClientSize = new Size(1198, 657);
             Controls.Add(_GameListView);
             Controls.Add(_PickerStatusStrip);
             Controls.Add(_PickerToolStrip);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4, 3, 4, 3);
             Name = "GamePicker";
