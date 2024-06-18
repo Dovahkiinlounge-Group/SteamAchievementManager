@@ -13,10 +13,6 @@ This is the code for SAM, originally released in 2008 by [Gibbed](https://github
   - ✅ Lock individual achievements
   - ✅ Batch unlock achievements
 
-- 🌍 **Multi-language Support**
-  - [✅] English
-  - [❌] German
-
 Feel free to reach out if you have any questions or need further assistance. Enjoy using Steam Achievement Manager!
 
 
