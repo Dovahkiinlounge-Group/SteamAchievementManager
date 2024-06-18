@@ -29,28 +29,28 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.Windows.Forms.ToolStripSeparator _ToolStripSeparator1;
-            System.Windows.Forms.ToolStripSeparator _ToolStripSeparator2;
+            ToolStripSeparator _ToolStripSeparator1;
+            ToolStripSeparator _ToolStripSeparator2;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GamePicker));
-            _LogoImageList = new System.Windows.Forms.ImageList(components);
+            _LogoImageList = new ImageList(components);
             _CallbackTimer = new System.Windows.Forms.Timer(components);
-            _PickerToolStrip = new System.Windows.Forms.ToolStrip();
-            _RefreshGamesButton = new System.Windows.Forms.ToolStripButton();
-            _AddGameTextBox = new System.Windows.Forms.ToolStripTextBox();
-            _AddGameButton = new System.Windows.Forms.ToolStripButton();
-            _FilterDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
-            _FilterGamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            _FilterDemosMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            _FilterModsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            _FilterJunkMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            _PickerToolStrip = new ToolStrip();
+            _RefreshGamesButton = new ToolStripButton();
+            _AddGameTextBox = new ToolStripTextBox();
+            _AddGameButton = new ToolStripButton();
+            _FilterDropDownButton = new ToolStripDropDownButton();
+            _FilterGamesMenuItem = new ToolStripMenuItem();
+            _FilterDemosMenuItem = new ToolStripMenuItem();
+            _FilterModsMenuItem = new ToolStripMenuItem();
+            _FilterJunkMenuItem = new ToolStripMenuItem();
             _GameListView = new DoubleBufferedListView();
-            _PickerStatusStrip = new System.Windows.Forms.StatusStrip();
-            _PickerStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            _DownloadStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            _PickerStatusStrip = new StatusStrip();
+            _PickerStatusLabel = new ToolStripStatusLabel();
+            _DownloadStatusLabel = new ToolStripStatusLabel();
             _LogoWorker = new System.ComponentModel.BackgroundWorker();
             _ListWorker = new System.ComponentModel.BackgroundWorker();
-            _ToolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            _ToolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            _ToolStripSeparator1 = new ToolStripSeparator();
+            _ToolStripSeparator2 = new ToolStripSeparator();
             _PickerToolStrip.SuspendLayout();
             _PickerStatusStrip.SuspendLayout();
             SuspendLayout();
@@ -58,18 +58,18 @@
             // _ToolStripSeparator1
             // 
             _ToolStripSeparator1.Name = "_ToolStripSeparator1";
-            _ToolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            _ToolStripSeparator1.Size = new Size(6, 25);
             // 
             // _ToolStripSeparator2
             // 
             _ToolStripSeparator2.Name = "_ToolStripSeparator2";
-            _ToolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            _ToolStripSeparator2.Size = new Size(6, 25);
             // 
             // _LogoImageList
             // 
-            _LogoImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            _LogoImageList.ImageSize = new System.Drawing.Size(184, 69);
-            _LogoImageList.TransparentColor = System.Drawing.Color.Transparent;
+            _LogoImageList.ColorDepth = ColorDepth.Depth32Bit;
+            _LogoImageList.ImageSize = new Size(210, 95);
+            _LogoImageList.TransparentColor = Color.Transparent;
             // 
             // _CallbackTimer
             // 
@@ -78,55 +78,55 @@
             // 
             // _PickerToolStrip
             // 
-            _PickerToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { _RefreshGamesButton, _ToolStripSeparator1, _AddGameTextBox, _AddGameButton, _ToolStripSeparator2, _FilterDropDownButton });
-            _PickerToolStrip.Location = new System.Drawing.Point(0, 0);
+            _PickerToolStrip.Items.AddRange(new ToolStripItem[] { _RefreshGamesButton, _ToolStripSeparator1, _AddGameTextBox, _AddGameButton, _ToolStripSeparator2, _FilterDropDownButton });
+            _PickerToolStrip.Location = new Point(0, 0);
             _PickerToolStrip.Name = "_PickerToolStrip";
-            _PickerToolStrip.Size = new System.Drawing.Size(1087, 25);
+            _PickerToolStrip.Size = new Size(1156, 25);
             _PickerToolStrip.TabIndex = 1;
             _PickerToolStrip.Text = "toolStrip1";
             // 
             // _RefreshGamesButton
             // 
             _RefreshGamesButton.Image = Resources.Refresh;
-            _RefreshGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            _RefreshGamesButton.ImageTransparentColor = Color.Magenta;
             _RefreshGamesButton.Name = "_RefreshGamesButton";
-            _RefreshGamesButton.Size = new System.Drawing.Size(105, 22);
+            _RefreshGamesButton.Size = new Size(105, 22);
             _RefreshGamesButton.Text = "Refresh Games";
             _RefreshGamesButton.Click += OnRefresh;
             // 
             // _AddGameTextBox
             // 
             _AddGameTextBox.Name = "_AddGameTextBox";
-            _AddGameTextBox.Size = new System.Drawing.Size(116, 25);
+            _AddGameTextBox.Size = new Size(116, 25);
             _AddGameTextBox.Visible = false;
             // 
             // _AddGameButton
             // 
             _AddGameButton.Image = Resources.Search;
-            _AddGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            _AddGameButton.ImageTransparentColor = Color.Magenta;
             _AddGameButton.Name = "_AddGameButton";
-            _AddGameButton.Size = new System.Drawing.Size(83, 22);
+            _AddGameButton.Size = new Size(83, 22);
             _AddGameButton.Text = "Add Game";
             _AddGameButton.Visible = false;
             _AddGameButton.Click += OnAddGame;
             // 
             // _FilterDropDownButton
             // 
-            _FilterDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            _FilterDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { _FilterGamesMenuItem, _FilterDemosMenuItem, _FilterModsMenuItem, _FilterJunkMenuItem });
+            _FilterDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            _FilterDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { _FilterGamesMenuItem, _FilterDemosMenuItem, _FilterModsMenuItem, _FilterJunkMenuItem });
             _FilterDropDownButton.Image = Resources.Filter;
-            _FilterDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            _FilterDropDownButton.ImageTransparentColor = Color.Magenta;
             _FilterDropDownButton.Name = "_FilterDropDownButton";
-            _FilterDropDownButton.Size = new System.Drawing.Size(29, 22);
+            _FilterDropDownButton.Size = new Size(29, 22);
             _FilterDropDownButton.Text = "Game filtering";
             // 
             // _FilterGamesMenuItem
             // 
             _FilterGamesMenuItem.Checked = true;
             _FilterGamesMenuItem.CheckOnClick = true;
-            _FilterGamesMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            _FilterGamesMenuItem.CheckState = CheckState.Checked;
             _FilterGamesMenuItem.Name = "_FilterGamesMenuItem";
-            _FilterGamesMenuItem.Size = new System.Drawing.Size(180, 22);
+            _FilterGamesMenuItem.Size = new Size(142, 22);
             _FilterGamesMenuItem.Text = "Show &games";
             _FilterGamesMenuItem.CheckedChanged += OnFilterUpdate;
             // 
@@ -134,7 +134,7 @@
             // 
             _FilterDemosMenuItem.CheckOnClick = true;
             _FilterDemosMenuItem.Name = "_FilterDemosMenuItem";
-            _FilterDemosMenuItem.Size = new System.Drawing.Size(180, 22);
+            _FilterDemosMenuItem.Size = new Size(142, 22);
             _FilterDemosMenuItem.Text = "Show &demos";
             _FilterDemosMenuItem.CheckedChanged += OnFilterUpdate;
             // 
@@ -142,7 +142,7 @@
             // 
             _FilterModsMenuItem.CheckOnClick = true;
             _FilterModsMenuItem.Name = "_FilterModsMenuItem";
-            _FilterModsMenuItem.Size = new System.Drawing.Size(180, 22);
+            _FilterModsMenuItem.Size = new Size(142, 22);
             _FilterModsMenuItem.Text = "Show &mods";
             _FilterModsMenuItem.CheckedChanged += OnFilterUpdate;
             // 
@@ -150,25 +150,25 @@
             // 
             _FilterJunkMenuItem.CheckOnClick = true;
             _FilterJunkMenuItem.Name = "_FilterJunkMenuItem";
-            _FilterJunkMenuItem.Size = new System.Drawing.Size(180, 22);
+            _FilterJunkMenuItem.Size = new Size(142, 22);
             _FilterJunkMenuItem.Text = "Show &junk";
             _FilterJunkMenuItem.CheckedChanged += OnFilterUpdate;
             // 
             // _GameListView
             // 
-            _GameListView.BackColor = System.Drawing.Color.Black;
-            _GameListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            _GameListView.ForeColor = System.Drawing.Color.White;
+            _GameListView.BackColor = Color.Black;
+            _GameListView.Dock = DockStyle.Fill;
+            _GameListView.ForeColor = Color.White;
             _GameListView.LargeImageList = _LogoImageList;
-            _GameListView.Location = new System.Drawing.Point(0, 25);
-            _GameListView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            _GameListView.Location = new Point(0, 25);
+            _GameListView.Margin = new Padding(4, 3, 4, 3);
             _GameListView.MultiSelect = false;
             _GameListView.Name = "_GameListView";
-            _GameListView.Size = new System.Drawing.Size(1087, 610);
+            _GameListView.Size = new Size(1156, 610);
             _GameListView.SmallImageList = _LogoImageList;
-            _GameListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            _GameListView.Sorting = SortOrder.Ascending;
             _GameListView.TabIndex = 0;
-            _GameListView.TileSize = new System.Drawing.Size(184, 69);
+            _GameListView.TileSize = new Size(184, 69);
             _GameListView.UseCompatibleStateImageBehavior = false;
             _GameListView.VirtualMode = true;
             _GameListView.ItemActivate += OnActivateGame;
@@ -178,26 +178,26 @@
             // 
             // _PickerStatusStrip
             // 
-            _PickerStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { _PickerStatusLabel, _DownloadStatusLabel });
-            _PickerStatusStrip.Location = new System.Drawing.Point(0, 635);
+            _PickerStatusStrip.Items.AddRange(new ToolStripItem[] { _PickerStatusLabel, _DownloadStatusLabel });
+            _PickerStatusStrip.Location = new Point(0, 635);
             _PickerStatusStrip.Name = "_PickerStatusStrip";
-            _PickerStatusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            _PickerStatusStrip.Size = new System.Drawing.Size(1087, 22);
+            _PickerStatusStrip.Padding = new Padding(1, 0, 16, 0);
+            _PickerStatusStrip.Size = new Size(1156, 22);
             _PickerStatusStrip.TabIndex = 2;
             _PickerStatusStrip.Text = "statusStrip";
             // 
             // _PickerStatusLabel
             // 
             _PickerStatusLabel.Name = "_PickerStatusLabel";
-            _PickerStatusLabel.Size = new System.Drawing.Size(1070, 17);
+            _PickerStatusLabel.Size = new Size(1139, 17);
             _PickerStatusLabel.Spring = true;
-            _PickerStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            _PickerStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // _DownloadStatusLabel
             // 
             _DownloadStatusLabel.Image = Resources.Download;
             _DownloadStatusLabel.Name = "_DownloadStatusLabel";
-            _DownloadStatusLabel.Size = new System.Drawing.Size(111, 17);
+            _DownloadStatusLabel.Size = new Size(111, 17);
             _DownloadStatusLabel.Text = "Download status";
             _DownloadStatusLabel.Visible = false;
             // 
@@ -215,15 +215,14 @@
             // 
             // GamePicker
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1087, 657);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1156, 657);
             Controls.Add(_GameListView);
             Controls.Add(_PickerStatusStrip);
             Controls.Add(_PickerToolStrip);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
-            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(4, 3, 4, 3);
             Name = "GamePicker";
             _PickerToolStrip.ResumeLayout(false);
             _PickerToolStrip.PerformLayout();

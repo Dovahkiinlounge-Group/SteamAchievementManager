@@ -39,7 +39,6 @@ namespace SAM.Picker
     internal partial class GamePicker : Form
     {
         private readonly API.Client _SteamClient;
-
         private readonly Dictionary<uint, GameInfo> _Games;
         private readonly List<GameInfo> _FilteredGames;
         private int _SelectedGameIndex;
@@ -76,7 +75,6 @@ namespace SAM.Picker
 
             this._AppDataChangedCallback = client.CreateAndRegisterCallback<API.Callbacks.AppDataChanged>();
             this._AppDataChangedCallback.OnRun += this.OnAppDataChanged;
-
             this.AddGames();
         }
 
@@ -126,8 +124,7 @@ namespace SAM.Picker
         {
             if (e.Error != null || e.Cancelled)
             {
-                this.AddDefaultGames();
-                //MessageBox.Show(e.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(e.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             this.RefreshGames();
@@ -453,11 +450,6 @@ namespace SAM.Picker
             this._Games.Clear();
             this._RefreshGamesButton.Enabled = false;
             this._ListWorker.RunWorkerAsync();
-        }
-
-        private void AddDefaultGames()
-        {
-            //this.AddGame(480, "normal"); // Spacewar
         }
 
         private void OnTimer(object sender, EventArgs e)

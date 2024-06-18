@@ -22,6 +22,7 @@
 
 using System;
 using System.Windows.Forms;
+using SAM.API.Lang;
 
 namespace SAM.Picker
 {
@@ -30,6 +31,8 @@ namespace SAM.Picker
         [STAThread]
         private static void Main()
         {
+
+
             if (API.Steam.GetInstallPath() == Application.StartupPath)
             {
                 MessageBox.Show(
