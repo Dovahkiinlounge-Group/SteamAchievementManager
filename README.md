@@ -12,6 +12,7 @@ This is the code for SAM, originally released in 2008 by [Gibbed](https://github
   - ✅ Unlock individual achievements
   - ✅ Lock individual achievements
   - ✅ Batch unlock achievements
+  - ✅ Full Reset achievements
 
 - **Other Features**
   - Cached download icons: Icons used within the application are cached locally after initial download, reducing load times and improving responsiveness.
