@@ -1,6 +1,6 @@
 # Steam Achievement Manager
 
-This is the code for SAM, originally released in 2008 by [Gibbed](https://github.com/gibbed), last major release in 2011, and last updated in 2013 (a hotfix). Since then, I have taken over the updates and continued enhancing the software.
+This is the code for SAM, originally released in 2008 by [Gibbed](https://github.com/gibbed), last major release in 2011, and last updated in Sep 16, 2024. Since 2024, I continued enhancing the software.
 
 [Download last release from](https://github.com/gibbed/SteamAchievementManager/releases/latest) - [Gibbed](https://github.com/gibbed) .
 
